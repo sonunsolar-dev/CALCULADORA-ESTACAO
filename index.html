@@ -649,7 +649,7 @@
                 <li><a href="#tinder">Nossa Empresa</a></li>
                 <li><a href="#hero">Tecnologia DC</a></li>
                 <li><a href="#calculadora">Calculadora ROI</a></li>
-                <li><a href="#agendar" class="btn btn-outline" style="padding: 10px 18px; font-size: 0.9rem;">Agendar Reunião</a></li>
+                <li><a href="#" onclick="abrirWhatsApp('Olá! Gostaria de agendar uma reunião sobre os carregadores DC da Sonun EV.'); return false;" class="btn btn-outline" style="padding: 10px 18px; font-size: 0.9rem;">Agendar Reunião</a></li>
             </ul>
         </div>
     </nav>
@@ -776,17 +776,17 @@
                             <span class="val-display" id="modelLabel">60 kW</span>
                         </label>
                         <select id="modelSelect" class="select-input" onchange="updateCalc()">
-                            <option value="60" selected>60 kW DC - R$ 85.000</option>
-                            <option value="120">120 kW DC - R$ 125.000</option>
+                            <option value="60" selected>60 kW DC - R$ 75.000</option>
+                            <option value="120">120 kW DC - R$ 95.000</option>
                         </select>
                     </div>
 
                     <!-- Campo: Custos de Instalação -->
                     <div class="input-group">
                         <label>Custos de Instalação
-                            <span class="val-display" id="installCostVal">R$ 50.000</span>
+                            <span class="val-display" id="installCostVal">R$ 30.000</span>
                         </label>
-                        <input type="range" id="installCostInput" class="slider-input" min="50000" max="100000" value="50000" step="5000" oninput="updateCalc()">
+                        <input type="range" id="installCostInput" class="slider-input" min="30000" max="90000" value="30000" step="5000" oninput="updateCalc()">
                     </div>
 
                     <!-- Campo: Taxa de Software / App -->
@@ -803,6 +803,14 @@
                             <span class="val-display" id="comodatoVal">12%</span>
                         </label>
                         <input type="range" id="comodatoInput" class="slider-input" min="0" max="25" value="12" step="1" oninput="updateCalc()">
+                    </div>
+
+                    <!-- Campo: Impostos -->
+                    <div class="input-group">
+                        <label>Impostos (%)
+                            <span class="val-display" id="taxVal">15%</span>
+                        </label>
+                        <input type="range" id="taxInput" class="slider-input" min="6" max="30" value="15" step="1" oninput="updateCalc()">
                     </div>
 
                     <div class="input-group">
@@ -857,6 +865,11 @@
                         </div>
 
                         <div class="res-card">
+                            <div class="res-label">Impostos (<span id="taxPercentText">15%</span>)</div>
+                            <div class="res-value" style="font-size: 1.1rem; color: #F87171;" id="taxAmount">- R$ 1.890</div>
+                        </div>
+
+                        <div class="res-card">
                             <div class="res-label">Lucro Líquido Mensal</div>
                             <div class="res-value accent" id="monthlyProfit">R$ 5.328</div>
                         </div>
@@ -866,16 +879,16 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div>
                                 <div class="res-label">Payback Estimado</div>
-                                <div style="font-size: 1.3rem; font-weight: 700;" id="paybackMonths">25 Meses</div>
+                                <div style="font-size: 1.3rem; font-weight: 700;" id="paybackMonths">24 Meses</div>
                             </div>
                             <div>
                                 <div class="res-label">Retorno Mensal</div>
-                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);" id="roiPercent">4% /mês</div>
+                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);" id="roiPercent">4.5% /mês</div>
                             </div>
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 24px;" onclick="alert('Simulação salva! Entraremos em contato.')">
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 24px;" onclick="enviarSimulacaoWhatsApp()">
                         Quero este Carregador
                     </button>
                 </div>
@@ -913,17 +926,18 @@
             const installCost = parseFloat(document.getElementById('installCostInput').value);
             const softwareRate = parseFloat(document.getElementById('softwareInput').value) / 100;
             const comodatoRate = parseFloat(document.getElementById('comodatoInput').value) / 100;
+            const taxRate = parseFloat(document.getElementById('taxInput').value) / 100;
             const recharges = parseInt(document.getElementById('rechargesInput').value);
             const kwhPerRecharge = parseFloat(document.getElementById('kwhInput').value);
             const pricePerKwh = parseFloat(document.getElementById('priceInput').value);
             const costPerKwh = parseFloat(document.getElementById('costInput').value);
 
             const equipmentMap = {
-                 60: 85000,
-                120: 125000,
+                 60: 75000,
+                120: 95000,
                };
             
-            const equipmentCost = equipmentMap[kwPower] || 85000;
+            const equipmentCost = equipmentMap[kwPower] || 75000;
             const totalInvestment = equipmentCost + installCost;
 
             const formatBRL = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
@@ -938,6 +952,9 @@
             
             document.getElementById('comodatoVal').innerText = (comodatoRate * 100).toFixed(0) + '%';
             document.getElementById('comodatoPercentText').innerText = (comodatoRate * 100).toFixed(0) + '%';
+            
+            document.getElementById('taxVal').innerText = (taxRate * 100).toFixed(0) + '%';
+            document.getElementById('taxPercentText').innerText = (taxRate * 100).toFixed(0) + '%';
             
             document.getElementById('rechargesVal').innerText = recharges;
             document.getElementById('kwhVal').innerText = kwhPerRecharge + ' kWh';
@@ -955,9 +972,10 @@
             // Custos calculados dinamicamente com base nos sliders
             const softwareAndFeeCost = monthlyRevenue * softwareRate;
             const comodatoCost = monthlyRevenue * comodatoRate;
+            const taxCost = monthlyRevenue * taxRate;
 
-            // Lucro Líquido final descontando energia, software e comodato
-            const monthlyProfit = monthlyRevenue - monthlyEnergyCost - softwareAndFeeCost - comodatoCost;
+            // Lucro Líquido final descontando energia, software, comodato e impostos
+            const monthlyProfit = monthlyRevenue - monthlyEnergyCost - softwareAndFeeCost - comodatoCost - taxCost;
 
             // Payback e Retorno baseados no Investimento Total
             const payback = monthlyProfit > 0 ? (totalInvestment / monthlyProfit) : 0;
@@ -966,9 +984,36 @@
             document.getElementById('monthlyRevenue').innerText = formatBRL(monthlyRevenue);
             document.getElementById('softwareAmount').innerText = '- ' + formatBRL(softwareAndFeeCost);
             document.getElementById('comodatoAmount').innerText = '- ' + formatBRL(comodatoCost);
+            document.getElementById('taxAmount').innerText = '- ' + formatBRL(taxCost);
             document.getElementById('monthlyProfit').innerText = formatBRL(monthlyProfit);
             document.getElementById('paybackMonths').innerText = payback > 0 ? payback.toFixed(1) + ' Meses' : 'N/A';
             document.getElementById('roiPercent').innerText = monthlyRoi.toFixed(1) + '% /mês';
+        }
+
+        // Envia o resumo da simulação atual para o WhatsApp
+        function abrirWhatsApp(mensagem) {
+            const telefone = '554796127869';
+            const url = 'https://wa.me/' + telefone + '?text=' + encodeURIComponent(mensagem);
+            window.open(url, '_blank');
+        }
+
+        function enviarSimulacaoWhatsApp() {
+            const modelo = document.getElementById('modelLabel').innerText;
+            const investimento = document.getElementById('totalInvestment').innerText;
+            const faturamento = document.getElementById('monthlyRevenue').innerText;
+            const lucro = document.getElementById('monthlyProfit').innerText;
+            const payback = document.getElementById('paybackMonths').innerText;
+            const roi = document.getElementById('roiPercent').innerText;
+
+            const mensagem = 'Olá! Simulei um carregador DC Sonun EV e quero saber mais:\n' +
+                '- Modelo: ' + modelo + '\n' +
+                '- Investimento Total: ' + investimento + '\n' +
+                '- Faturamento Mensal Estimado: ' + faturamento + '\n' +
+                '- Lucro Líquido Mensal: ' + lucro + '\n' +
+                '- Payback Estimado: ' + payback + '\n' +
+                '- Retorno Mensal: ' + roi;
+
+            abrirWhatsApp(mensagem);
         }
 
         window.onload = updateCalc;
