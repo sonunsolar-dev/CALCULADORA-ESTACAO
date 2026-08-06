@@ -893,6 +893,91 @@
                     </button>
                 </div>
             </div>
+
+            <div class="section-header" style="margin-top: 80px;">
+                <div class="badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    Payback Real
+                </div>
+                <h2>Payback <span class="text-gradient">Real</span> & Divisão entre Sócios</h2>
+                <p>Considera o valor de revenda do equipamento (depreciação de 20% ao ano) e simula quanto cada sócio recebe por mês.</p>
+            </div>
+
+            <div class="calc-wrapper">
+                <div class="calc-controls" style="grid-template-columns: 1fr;">
+                    <div class="input-group">
+                        <label>Prazo para Payback Real
+                            <span class="val-display" id="paybackYearsVal">3 anos</span>
+                        </label>
+                        <input type="range" id="paybackYearsInput" class="slider-input" min="1" max="5" value="3" step="1" oninput="updatePaybackReal()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Número Total de Sócios
+                            <span class="val-display" id="numSociosVal">3</span>
+                        </label>
+                        <input type="range" id="numSociosInput" class="slider-input" min="1" max="5" value="3" step="1" oninput="updatePaybackReal()">
+                    </div>
+                </div>
+
+                <div class="calc-results">
+                    <div>
+                        <div class="res-card">
+                            <div class="res-label">Depreciação Acumulada do Equipamento (20%/ano)</div>
+                            <div class="res-value" style="font-size: 1.1rem; color: #F87171;" id="depreciacaoAcumulada">- 60% (3 anos)</div>
+                        </div>
+
+                        <div class="res-card">
+                            <div class="res-label">Valor de Revenda Estimado do Equipamento</div>
+                            <div class="res-value" style="font-size: 1.4rem; color: var(--text-muted);" id="valorRevenda">R$ 30.000</div>
+                        </div>
+
+                        <div class="res-card">
+                            <div class="res-label">Investimento Real (Total - Revenda)</div>
+                            <div class="res-value" style="font-size: 1.4rem; color: var(--text-muted);" id="investimentoReal">R$ 105.000</div>
+                        </div>
+
+                        <div class="res-card">
+                            <div class="res-label">Payback Real</div>
+                            <div class="res-value accent" id="paybackReal">18.5 Meses</div>
+                        </div>
+
+                        <div class="res-divider"></div>
+
+                        <div class="res-card">
+                            <div class="res-label">Valor Mensal do Payback (amortizado em <span id="paybackYearsText2">3</span> anos)</div>
+                            <div class="res-value" style="font-size: 1.1rem; color: #F87171;" id="valorMensalPayback">- R$ 2.917</div>
+                        </div>
+
+                        <div class="res-card">
+                            <div class="res-label">Lucro Líquido Mensal Descontado do Payback</div>
+                            <div class="res-value" style="font-size: 1.3rem;" id="lucroDescontado">R$ 2.411</div>
+                        </div>
+
+                        <div class="res-divider"></div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <div class="res-label">Valor por Sócio Operativo</div>
+                                <div style="font-size: 1.3rem; font-weight: 700;" id="valorSocioOperativo">R$ 803</div>
+                            </div>
+                            <div>
+                                <div class="res-label">Valor do Sócio Investidor</div>
+                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);" id="valorSocioInvestidor">R$ 3.721</div>
+                            </div>
+                        </div>
+
+                        <div class="res-card" style="margin-top: 16px;">
+                            <div class="res-label">Rentabilidade Mensal do Sócio Investidor (cota líquida, sem a amortização)</div>
+                            <div class="res-value" style="font-size: 1.2rem;" id="rentabilidadeInvestidor">R$ 2.664 (2.0% /mês)</div>
+                        </div>
+
+                        <div class="res-label" style="margin-top: 8px; font-size: 0.8rem;">*O sócio investidor recebe 50% do lucro líquido descontado + o valor mensal do payback. O restante 50% é dividido igualmente entre os demais <span id="numSociosText2">2</span> sócio(s) operativo(s).</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -921,6 +1006,13 @@
         });
 
         // Atualização dos Cálculos ROI
+        const formatBRL = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+
+        // Variáveis globais alimentadas pelo updateCalc() e usadas pelo Payback Real
+        let currentEquipmentCost = 0;
+        let currentTotalInvestment = 0;
+        let currentMonthlyProfit = 0;
+
         function updateCalc() {
             const kwPower = parseFloat(document.getElementById('modelSelect').value);
             const installCost = parseFloat(document.getElementById('installCostInput').value);
@@ -939,8 +1031,6 @@
             
             const equipmentCost = equipmentMap[kwPower] || 75000;
             const totalInvestment = equipmentCost + installCost;
-
-            const formatBRL = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
 
             // Atualização dos textos da interface
             document.getElementById('modelLabel').innerText = kwPower + ' kW';
@@ -988,6 +1078,82 @@
             document.getElementById('monthlyProfit').innerText = formatBRL(monthlyProfit);
             document.getElementById('paybackMonths').innerText = payback > 0 ? payback.toFixed(1) + ' Meses' : 'N/A';
             document.getElementById('roiPercent').innerText = monthlyRoi.toFixed(1) + '% /mês';
+
+            // Guarda os valores para o cálculo do Payback Real / Divisão entre Sócios
+            currentEquipmentCost = equipmentCost;
+            currentTotalInvestment = totalInvestment;
+            currentMonthlyProfit = monthlyProfit;
+
+            updatePaybackReal();
+        }
+
+        // Cálculo do Payback Real (considerando revenda do equipamento) e divisão entre sócios
+        function updatePaybackReal() {
+            const years = parseInt(document.getElementById('paybackYearsInput').value);
+            const numSocios = parseInt(document.getElementById('numSociosInput').value);
+
+            const anosLabel = years === 1 ? '1 ano' : years + ' anos';
+            document.getElementById('paybackYearsVal').innerText = anosLabel;
+            document.getElementById('paybackYearsText2').innerText = years;
+            document.getElementById('numSociosVal').innerText = numSocios;
+
+            // Depreciação linear de 20% ao ano sobre o valor do equipamento (zera aos 5 anos)
+            const depreciationRate = Math.min(years * 0.20, 1);
+            const resaleValue = currentEquipmentCost * (1 - depreciationRate);
+
+            // Investimento real = Investimento Total menos o valor de revenda do equipamento
+            const realInvestment = Math.max(currentTotalInvestment - resaleValue, 0);
+
+            // Payback real em meses, com base no lucro líquido mensal
+            const paybackRealMonths = currentMonthlyProfit > 0 ? (realInvestment / currentMonthlyProfit) : 0;
+
+            // Valor mensal do payback: investimento real amortizado no prazo escolhido (em meses)
+            const monthlyPaybackValue = realInvestment / (years * 12);
+
+            // Lucro líquido mensal descontado do valor do payback
+            const discountedProfit = currentMonthlyProfit - monthlyPaybackValue;
+
+            // Divisão entre os sócios: o sócio investidor recebe 50% do lucro líquido descontado
+            // + o valor mensal do payback (amortização). O restante 50% é dividido igualmente
+            // entre os demais sócios (operativos).
+            const numOutrosSocios = Math.max(numSocios - 1, 0);
+
+            let investorProfitShare, othersProfitShareEach;
+            if (numOutrosSocios > 0) {
+                investorProfitShare = discountedProfit * 0.5;
+                othersProfitShareEach = (discountedProfit * 0.5) / numOutrosSocios;
+            } else {
+                // Sócio único: fica com 100% do lucro descontado, pois não há outros sócios
+                investorProfitShare = discountedProfit;
+                othersProfitShareEach = 0;
+            }
+
+            const investorValue = investorProfitShare + monthlyPaybackValue;
+
+            // Rentabilidade mensal "pura" do sócio investidor: sua cota de lucro sem contar
+            // o valor da amortização (que é retorno de capital, não lucro)
+            const investorMonthlyReturnPct = currentTotalInvestment > 0 ? (investorProfitShare / currentTotalInvestment) * 100 : 0;
+
+            document.getElementById('depreciacaoAcumulada').innerText = '- ' + (depreciationRate * 100).toFixed(0) + '% (' + anosLabel + ')';
+            document.getElementById('valorRevenda').innerText = formatBRL(resaleValue);
+            document.getElementById('investimentoReal').innerText = formatBRL(realInvestment);
+            document.getElementById('paybackReal').innerText = paybackRealMonths > 0 ? paybackRealMonths.toFixed(1) + ' Meses' : 'N/A';
+            document.getElementById('valorMensalPayback').innerText = '- ' + formatBRL(monthlyPaybackValue);
+
+            const lucroDescontadoEl = document.getElementById('lucroDescontado');
+            lucroDescontadoEl.innerText = formatBRL(discountedProfit);
+            lucroDescontadoEl.style.color = discountedProfit >= 0 ? 'var(--accent)' : '#F87171';
+
+            document.getElementById('valorSocioOperativo').innerText = formatBRL(othersProfitShareEach);
+            const investorEl = document.getElementById('valorSocioInvestidor');
+            investorEl.innerText = formatBRL(investorValue);
+            investorEl.style.color = investorValue >= 0 ? 'var(--accent)' : '#F87171';
+
+            const rentabilidadeEl = document.getElementById('rentabilidadeInvestidor');
+            rentabilidadeEl.innerText = formatBRL(investorProfitShare) + ' (' + investorMonthlyReturnPct.toFixed(1) + '% /mês)';
+            rentabilidadeEl.style.color = investorProfitShare >= 0 ? 'var(--accent)' : '#F87171';
+
+            document.getElementById('numSociosText2').innerText = numOutrosSocios;
         }
 
         // Envia o resumo da simulação atual para o WhatsApp
