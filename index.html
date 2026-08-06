@@ -580,7 +580,7 @@
         </div>
     </nav>
 
-    <!-- Seção Tinder do Carregador -->
+    <!-- Seção Tinder do Carregador 
     <section id="tinder">
         <div class="container">
             <div class="section-header">
@@ -702,10 +702,8 @@
                             <span class="val-display" id="modelLabel">60 kW</span>
                         </label>
                         <select id="modelSelect" class="select-input" onchange="updateCalc()">
-                            <option value="30">30 kW DC - R$ 45.000</option>
-                            <option value="60" selected>60 kW DC - R$ 75.000</option>
-                            <option value="120">120 kW DC - R$ 130.000</option>
-                            <option value="180">180 kW DC - R$ 180.000</option>
+                            <option value="60" selected>60 kW DC - R$ 85.000</option>
+                            <option value="120">120 kW DC - R$ 105.000</option>
                         </select>
                     </div>
 
@@ -805,12 +803,12 @@
             const costPerKwh = parseFloat(document.getElementById('costInput').value);
 
             const investmentMap = {
-                30: 45000,
-                60: 75000,
-                120: 130000,
-                180: 180000
+              
+                60: 85000,
+                120: 105000,
+              
             };
-            const investment = investmentMap[kwPower] || 75000;
+            const investment = investmentMap[kwPower] || 85000;
 
             document.getElementById('modelLabel').innerText = kwPower + ' kW';
             document.getElementById('rechargesVal').innerText = recharges;
