@@ -580,7 +580,7 @@
         </div>
     </nav>
 
-    <!-- Seção Tinder do Carregador 
+    <!-- Seção Tinder do Carregador -->
     <section id="tinder">
         <div class="container">
             <div class="section-header">
@@ -702,9 +702,19 @@
                             <span class="val-display" id="modelLabel">60 kW</span>
                         </label>
                         <select id="modelSelect" class="select-input" onchange="updateCalc()">
-                            <option value="60" selected>60 kW DC - R$ 85.000</option>
-                            <option value="120">120 kW DC - R$ 105.000</option>
+                            <option value="30">30 kW DC - R$ 45.000</option>
+                            <option value="60" selected>60 kW DC - R$ 75.000</option>
+                            <option value="120">120 kW DC - R$ 130.000</option>
+                            <option value="180">180 kW DC - R$ 180.000</option>
                         </select>
+                    </div>
+
+                    <!-- Novo Campo: Custos de Instalação -->
+                    <div class="input-group">
+                        <label>Custos de Instalação
+                            <span class="val-display" id="installCostVal">R$ 50.000</span>
+                        </label>
+                        <input type="range" id="installCostInput" class="slider-input" min="50000" max="100000" value="50000" step="5000" oninput="updateCalc()">
                     </div>
 
                     <div class="input-group">
@@ -739,6 +749,11 @@
                 <div class="calc-results">
                     <div>
                         <div class="res-card">
+                            <div class="res-label">Investimento Total (Equip. + Instalação)</div>
+                            <div class="res-value" style="font-size: 1.5rem; color: var(--text-muted);" id="totalInvestment">R$ 125.000</div>
+                        </div>
+
+                        <div class="res-card">
                             <div class="res-label">Faturamento Mensal Estimado</div>
                             <div class="res-value primary" id="monthlyRevenue">R$ 12.600</div>
                         </div>
@@ -753,11 +768,11 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div>
                                 <div class="res-label">Payback Estimado</div>
-                                <div style="font-size: 1.3rem; font-weight: 700;" id="paybackMonths">9.3 Meses</div>
+                                <div style="font-size: 1.3rem; font-weight: 700;" id="paybackMonths">15.4 Meses</div>
                             </div>
                             <div>
                                 <div class="res-label">Retorno Mensal</div>
-                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);" id="roiPercent">10.8% /mês</div>
+                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);" id="roiPercent">6.5% /mês</div>
                             </div>
                         </div>
                     </div>
@@ -797,24 +812,31 @@
         // Atualização dos Cálculos ROI
         function updateCalc() {
             const kwPower = parseFloat(document.getElementById('modelSelect').value);
+            const installCost = parseFloat(document.getElementById('installCostInput').value);
             const recharges = parseInt(document.getElementById('rechargesInput').value);
             const kwhPerRecharge = parseFloat(document.getElementById('kwhInput').value);
             const pricePerKwh = parseFloat(document.getElementById('priceInput').value);
             const costPerKwh = parseFloat(document.getElementById('costInput').value);
 
-            const investmentMap = {
-              
-                60: 85000,
-                120: 105000,
-              
+            const equipmentMap = {
+                30: 45000,
+                60: 75000,
+                120: 130000,
+                180: 180000
             };
-            const investment = investmentMap[kwPower] || 85000;
+            
+            const equipmentCost = equipmentMap[kwPower] || 75000;
+            const totalInvestment = equipmentCost + installCost;
+
+            const formatBRL = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
 
             document.getElementById('modelLabel').innerText = kwPower + ' kW';
+            document.getElementById('installCostVal').innerText = formatBRL(installCost);
             document.getElementById('rechargesVal').innerText = recharges;
             document.getElementById('kwhVal').innerText = kwhPerRecharge + ' kWh';
             document.getElementById('priceVal').innerText = 'R$ ' + pricePerKwh.toFixed(2);
             document.getElementById('costVal').innerText = 'R$ ' + costPerKwh.toFixed(2);
+            document.getElementById('totalInvestment').innerText = formatBRL(totalInvestment);
 
             const dailyKwh = recharges * kwhPerRecharge;
             const monthlyKwh = dailyKwh * 30;
@@ -824,10 +846,9 @@
             const softwareAndFeeCost = monthlyRevenue * 0.10;
             const monthlyProfit = monthlyRevenue - monthlyEnergyCost - softwareAndFeeCost;
 
-            const payback = monthlyProfit > 0 ? (investment / monthlyProfit) : 0;
-            const monthlyRoi = monthlyProfit > 0 ? ((monthlyProfit / investment) * 100) : 0;
-
-            const formatBRL = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+            // Payback e Retorno baseados no Investimento Total (Equipamento + Instalação)
+            const payback = monthlyProfit > 0 ? (totalInvestment / monthlyProfit) : 0;
+            const monthlyRoi = monthlyProfit > 0 ? ((monthlyProfit / totalInvestment) * 100) : 0;
 
             document.getElementById('monthlyRevenue').innerText = formatBRL(monthlyRevenue);
             document.getElementById('monthlyProfit').innerText = formatBRL(monthlyProfit);
