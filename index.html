@@ -368,7 +368,7 @@
         .calc-controls {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
         }
 
         .input-group {
@@ -425,11 +425,11 @@
         }
 
         .res-card {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .res-card .res-label {
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -437,7 +437,7 @@
         }
 
         .res-card .res-value {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: var(--text-main);
         }
@@ -651,11 +651,11 @@
 
                 <div class="hero-stats">
                     <div>
-                        <div class="stat-val text-gradient">De 10 a 24</div>
+                        <div class="stat-val text-gradient">~12</div>
                         <div class="stat-lbl">meses payback</div>
                     </div>
                     <div>
-                        <div class="stat-val text-gradient">De 4 a 8%</div>
+                        <div class="stat-val text-gradient">+5%</div>
                         <div class="stat-lbl">retorno/mês</div>
                     </div>
                     <div>
@@ -702,17 +702,35 @@
                             <span class="val-display" id="modelLabel">60 kW</span>
                         </label>
                         <select id="modelSelect" class="select-input" onchange="updateCalc()">
-                            <option value="60" selected>60 kW DC - R$ 85.000</option>
-                            <option value="120">120 kW DC - R$ 125.000</option>
-                            </select>
+                            <option value="30">30 kW DC - R$ 45.000</option>
+                            <option value="60" selected>60 kW DC - R$ 75.000</option>
+                            <option value="120">120 kW DC - R$ 130.000</option>
+                            <option value="180">180 kW DC - R$ 180.000</option>
+                        </select>
                     </div>
 
-                    <!-- Novo Campo: Custos de Instalação -->
+                    <!-- Campo: Custos de Instalação -->
                     <div class="input-group">
                         <label>Custos de Instalação
                             <span class="val-display" id="installCostVal">R$ 50.000</span>
                         </label>
                         <input type="range" id="installCostInput" class="slider-input" min="50000" max="100000" value="50000" step="5000" oninput="updateCalc()">
+                    </div>
+
+                    <!-- Campo: Taxa de Software / App -->
+                    <div class="input-group">
+                        <label>Taxa Software & Gestão (%)
+                            <span class="val-display" id="softwareVal">10%</span>
+                        </label>
+                        <input type="range" id="softwareInput" class="slider-input" min="0" max="20" value="10" step="1" oninput="updateCalc()">
+                    </div>
+
+                    <!-- Campo: Taxa de Comodato do Ponto -->
+                    <div class="input-group">
+                        <label>Taxa de Comodato / Ponto (%)
+                            <span class="val-display" id="comodatoVal">12%</span>
+                        </label>
+                        <input type="range" id="comodatoInput" class="slider-input" min="0" max="25" value="12" step="1" oninput="updateCalc()">
                     </div>
 
                     <div class="input-group">
@@ -748,7 +766,7 @@
                     <div>
                         <div class="res-card">
                             <div class="res-label">Investimento Total (Equip. + Instalação)</div>
-                            <div class="res-value" style="font-size: 1.5rem; color: var(--text-muted);" id="totalInvestment">R$ 125.000</div>
+                            <div class="res-value" style="font-size: 1.4rem; color: var(--text-muted);" id="totalInvestment">R$ 125.000</div>
                         </div>
 
                         <div class="res-card">
@@ -757,8 +775,18 @@
                         </div>
 
                         <div class="res-card">
+                            <div class="res-label">Taxa Software (<span id="softwarePercentText">10%</span>)</div>
+                            <div class="res-value" style="font-size: 1.1rem; color: #F87171;" id="softwareAmount">- R$ 1.260</div>
+                        </div>
+
+                        <div class="res-card">
+                            <div class="res-label">Desconto Comodato Ponto (<span id="comodatoPercentText">12%</span>)</div>
+                            <div class="res-value" style="font-size: 1.1rem; color: #F87171;" id="comodatoAmount">- R$ 1.512</div>
+                        </div>
+
+                        <div class="res-card">
                             <div class="res-label">Lucro Líquido Mensal</div>
-                            <div class="res-value accent" id="monthlyProfit">R$ 8.100</div>
+                            <div class="res-value accent" id="monthlyProfit">R$ 5.328</div>
                         </div>
 
                         <div class="res-divider"></div>
@@ -766,11 +794,11 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div>
                                 <div class="res-label">Payback Estimado</div>
-                                <div style="font-size: 1.3rem; font-weight: 700;" id="paybackMonths">15.4 Meses</div>
+                                <div style="font-size: 1.3rem; font-weight: 700;" id="paybackMonths">23.5 Meses</div>
                             </div>
                             <div>
                                 <div class="res-label">Retorno Mensal</div>
-                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);" id="roiPercent">6.5% /mês</div>
+                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);" id="roiPercent">4.3% /mês</div>
                             </div>
                         </div>
                     </div>
@@ -811,44 +839,63 @@
         function updateCalc() {
             const kwPower = parseFloat(document.getElementById('modelSelect').value);
             const installCost = parseFloat(document.getElementById('installCostInput').value);
+            const softwareRate = parseFloat(document.getElementById('softwareInput').value) / 100;
+            const comodatoRate = parseFloat(document.getElementById('comodatoInput').value) / 100;
             const recharges = parseInt(document.getElementById('rechargesInput').value);
             const kwhPerRecharge = parseFloat(document.getElementById('kwhInput').value);
             const pricePerKwh = parseFloat(document.getElementById('priceInput').value);
             const costPerKwh = parseFloat(document.getElementById('costInput').value);
 
             const equipmentMap = {
-                
-                60: 85000,
-                120: 125000,
-               
+                30: 45000,
+                60: 75000,
+                120: 130000,
+                180: 180000
             };
             
-            const equipmentCost = equipmentMap[kwPower] || 85000;
+            const equipmentCost = equipmentMap[kwPower] || 75000;
             const totalInvestment = equipmentCost + installCost;
 
             const formatBRL = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
 
+            // Atualização dos textos da interface
             document.getElementById('modelLabel').innerText = kwPower + ' kW';
             document.getElementById('installCostVal').innerText = formatBRL(installCost);
+            
+            // Textos das taxas dinâmicas
+            document.getElementById('softwareVal').innerText = (softwareRate * 100).toFixed(0) + '%';
+            document.getElementById('softwarePercentText').innerText = (softwareRate * 100).toFixed(0) + '%';
+            
+            document.getElementById('comodatoVal').innerText = (comodatoRate * 100).toFixed(0) + '%';
+            document.getElementById('comodatoPercentText').innerText = (comodatoRate * 100).toFixed(0) + '%';
+            
             document.getElementById('rechargesVal').innerText = recharges;
             document.getElementById('kwhVal').innerText = kwhPerRecharge + ' kWh';
             document.getElementById('priceVal').innerText = 'R$ ' + pricePerKwh.toFixed(2);
             document.getElementById('costVal').innerText = 'R$ ' + costPerKwh.toFixed(2);
             document.getElementById('totalInvestment').innerText = formatBRL(totalInvestment);
 
+            // Faturamento
             const dailyKwh = recharges * kwhPerRecharge;
             const monthlyKwh = dailyKwh * 30;
 
             const monthlyRevenue = monthlyKwh * pricePerKwh;
             const monthlyEnergyCost = monthlyKwh * costPerKwh;
-            const softwareAndFeeCost = monthlyRevenue * 0.10;
-            const monthlyProfit = monthlyRevenue - monthlyEnergyCost - softwareAndFeeCost;
+            
+            // Custos calculados dinamicamente com base nos sliders
+            const softwareAndFeeCost = monthlyRevenue * softwareRate;
+            const comodatoCost = monthlyRevenue * comodatoRate;
 
-            // Payback e Retorno baseados no Investimento Total (Equipamento + Instalação)
+            // Lucro Líquido final descontando energia, software e comodato
+            const monthlyProfit = monthlyRevenue - monthlyEnergyCost - softwareAndFeeCost - comodatoCost;
+
+            // Payback e Retorno baseados no Investimento Total
             const payback = monthlyProfit > 0 ? (totalInvestment / monthlyProfit) : 0;
             const monthlyRoi = monthlyProfit > 0 ? ((monthlyProfit / totalInvestment) * 100) : 0;
 
             document.getElementById('monthlyRevenue').innerText = formatBRL(monthlyRevenue);
+            document.getElementById('softwareAmount').innerText = '- ' + formatBRL(softwareAndFeeCost);
+            document.getElementById('comodatoAmount').innerText = '- ' + formatBRL(comodatoCost);
             document.getElementById('monthlyProfit').innerText = formatBRL(monthlyProfit);
             document.getElementById('paybackMonths').innerText = payback > 0 ? payback.toFixed(1) + ' Meses' : 'N/A';
             document.getElementById('roiPercent').innerText = monthlyRoi.toFixed(1) + '% /mês';
