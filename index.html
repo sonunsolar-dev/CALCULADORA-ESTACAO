@@ -93,6 +93,7 @@
             transition: all 0.3s ease;
             text-decoration: none;
             border: none;
+            width: auto;
         }
 
         .btn-primary {
@@ -124,8 +125,9 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: rgba(9, 13, 20, 0.85);
+            background: rgba(9, 13, 20, 0.92);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
             height: 70px;
             display: flex;
@@ -172,9 +174,19 @@
             color: var(--primary);
         }
 
+        /* Menu Mobile Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 8px;
+        }
+
         /* Sections */
         section {
-            padding: 100px 0;
+            padding: 100px 0 60px 0;
         }
 
         .section-header {
@@ -195,11 +207,11 @@
             margin: 0 auto;
         }
 
-        /* Image Placeholder Box (Espaço para upload no GitHub) */
+        /* Image Placeholder / Product Card */
         .img-placeholder {
             width: 100%;
-            height: 100%;
-            min-height: 380px;
+            height: auto;
+            min-height: 280px;
             border: 2px dashed var(--border-highlight);
             border-radius: var(--radius-lg);
             background: rgba(17, 24, 39, 0.6);
@@ -207,44 +219,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
         }
 
-        .img-placeholder:hover {
-            border-color: var(--primary);
-            background: rgba(0, 102, 255, 0.05);
-        }
-
-        .img-placeholder svg {
-            width: 48px;
-            height: 48px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-
-        .img-placeholder span {
-            font-weight: 600;
-            color: var(--text-main);
-            font-size: 1rem;
-            margin-bottom: 6px;
-        }
-
-        .img-placeholder p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .img-placeholder code {
-            display: inline-block;
-            margin-top: 10px;
-            background: rgba(0,0,0,0.4);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            color: var(--accent);
+        .img-placeholder img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            object-fit: contain;
         }
 
         /* Tinder Grid */
@@ -365,6 +350,7 @@
             font-size: 0.875rem;
             font-weight: 600;
             margin-top: 20px;
+            box-sizing: border-box;
         }
 
         /* Calculadora ROI */
@@ -405,8 +391,8 @@
 
         .slider-input {
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
+            height: 10px;
+            border-radius: 5px;
             background: var(--bg-input);
             outline: none;
             accent-color: var(--primary);
@@ -415,7 +401,7 @@
 
         .select-input, .number-input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 16px;
             background: var(--bg-input);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
@@ -479,22 +465,88 @@
             font-size: 0.9rem;
         }
 
-        /* Responsividade */
+        /* Media Queries - Responsividade para Mobile (iOS & Android) */
         @media (max-width: 900px) {
+            section {
+                padding: 80px 0 40px 0;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            /* Menu Responsivo */
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: rgba(9, 13, 20, 0.98);
+                padding: 20px;
+                border-bottom: 1px solid var(--border-color);
+                gap: 20px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                font-size: 1.1rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Layout Grid Adjustments */
             .hero-grid, .calc-wrapper {
                 grid-template-columns: 1fr;
+                gap: 32px;
             }
+
             .tinder-grid {
                 grid-template-columns: 1fr;
             }
+
             .card-premium {
                 grid-column: span 1;
             }
+
             .hero-title {
-                font-size: 2.5rem;
+                font-size: 2.25rem;
             }
-            .nav-links {
-                display: none;
+
+            .section-header h2 {
+                font-size: 1.85rem;
+            }
+
+            .calc-wrapper {
+                padding: 20px;
+            }
+
+            .calc-results {
+                padding: 20px;
+            }
+
+            .hero-stats {
+                gap: 12px;
+            }
+
+            .stat-val {
+                font-size: 1.35rem;
+            }
+
+            .stat-lbl {
+                font-size: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
             }
         }
     </style>
@@ -510,16 +562,25 @@
                 </svg>
                 <span>Sonun<span style="color:var(--primary);">EV</span></span>
             </a>
-            <ul class="nav-links">
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menu">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#tinder">Nossa Empresa</a></li>
                 <li><a href="#hero">Tecnologia DC</a></li>
                 <li><a href="#calculadora">Calculadora ROI</a></li>
-                <li><a href="#agendar" class="btn btn-outline" style="padding: 8px 18px; font-size: 0.85rem;">Agendar Reunião</a></li>
+                <li><a href="#agendar" class="btn btn-outline" style="padding: 10px 18px; font-size: 0.9rem;">Agendar Reunião</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Seção Tinder do Carregador 
+    <!-- Seção Tinder do Carregador -->
     <section id="tinder">
         <div class="container">
             <div class="section-header">
@@ -580,7 +641,7 @@
                     Invista em Autonomia & Lucratividade<br>
                     <span class="text-gradient">Recarga Elétrica DC</span>
                 </h1>
-                <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px;">
+                <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 30px;">
                     Sem funcionários, sem necessidade de estar presente. Carregadores DC rápidos com alto potencial de retorno. Simule seus ganhos e descubra por que este é o negócio do futuro.
                 </p>
                 
@@ -606,13 +667,14 @@
 
             <!-- Espaço reservado para Imagem / Produto -->
             <div>
-                   <div class="img-placeholder">
-                     <img src="carregador-dc.png" alt="Carregador DC Showroom">
-                   <div class="guarantee-badge" style="width: 100%; justify-content: center;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                    01 ano de garantia + 1 ano de seguro grátis!
+                <div class="img-placeholder">
+                    <img src="carregador-dc.png" alt="Carregador DC Showroom" onerror="this.style.display='none'">
+                    <div class="guarantee-badge" style="width: 100%; justify-content: center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        01 ano de garantia + 1 ano de seguro grátis!
+                    </div>
                 </div>
             </div>
         </div>
@@ -693,11 +755,11 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div>
                                 <div class="res-label">Payback Estimado</div>
-                                <div style="font-size: 1.4rem; font-weight: 700;" id="paybackMonths">9.3 Meses</div>
+                                <div style="font-size: 1.3rem; font-weight: 700;" id="paybackMonths">9.3 Meses</div>
                             </div>
                             <div>
                                 <div class="res-label">Retorno Mensal</div>
-                                <div style="font-size: 1.4rem; font-weight: 700; color: var(--accent);" id="roiPercent">10.8% /mês</div>
+                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);" id="roiPercent">10.8% /mês</div>
                             </div>
                         </div>
                     </div>
@@ -717,17 +779,31 @@
         </div>
     </footer>
 
-    <!-- Lógica de Cálculos em Javascript -->
+    <!-- Lógica de Menu Mobile e Cálculos em Javascript -->
     <script>
+        // Toggle do Menu Mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Fechar menu ao clicar em um link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Atualização dos Cálculos ROI
         function updateCalc() {
-            // Obter valores dos inputs
             const kwPower = parseFloat(document.getElementById('modelSelect').value);
             const recharges = parseInt(document.getElementById('rechargesInput').value);
             const kwhPerRecharge = parseFloat(document.getElementById('kwhInput').value);
             const pricePerKwh = parseFloat(document.getElementById('priceInput').value);
             const costPerKwh = parseFloat(document.getElementById('costInput').value);
 
-            // Mapeamento de preço estimado de investimento por potência
             const investmentMap = {
                 30: 45000,
                 60: 75000,
@@ -736,36 +812,31 @@
             };
             const investment = investmentMap[kwPower] || 75000;
 
-            // Atualizar displays de texto
             document.getElementById('modelLabel').innerText = kwPower + ' kW';
             document.getElementById('rechargesVal').innerText = recharges;
             document.getElementById('kwhVal').innerText = kwhPerRecharge + ' kWh';
             document.getElementById('priceVal').innerText = 'R$ ' + pricePerKwh.toFixed(2);
             document.getElementById('costVal').innerText = 'R$ ' + costPerKwh.toFixed(2);
 
-            // Cálculos
             const dailyKwh = recharges * kwhPerRecharge;
             const monthlyKwh = dailyKwh * 30;
 
             const monthlyRevenue = monthlyKwh * pricePerKwh;
             const monthlyEnergyCost = monthlyKwh * costPerKwh;
-            const softwareAndFeeCost = monthlyRevenue * 0.10; // 10% de taxa de software/adquirente
+            const softwareAndFeeCost = monthlyRevenue * 0.10;
             const monthlyProfit = monthlyRevenue - monthlyEnergyCost - softwareAndFeeCost;
 
             const payback = monthlyProfit > 0 ? (investment / monthlyProfit) : 0;
             const monthlyRoi = monthlyProfit > 0 ? ((monthlyProfit / investment) * 100) : 0;
 
-            // Formatador Monetário
             const formatBRL = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
 
-            // Exibir resultados
             document.getElementById('monthlyRevenue').innerText = formatBRL(monthlyRevenue);
             document.getElementById('monthlyProfit').innerText = formatBRL(monthlyProfit);
             document.getElementById('paybackMonths').innerText = payback > 0 ? payback.toFixed(1) + ' Meses' : 'N/A';
             document.getElementById('roiPercent').innerText = monthlyRoi.toFixed(1) + '% /mês';
         }
 
-        // Executar no carregamento inicial
         window.onload = updateCalc;
     </script>
 </body>
