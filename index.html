@@ -947,7 +947,7 @@
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div>
-                                <div class="res-label">Payback Operacional</div>
+                                <div class="res-label">Payback Estimado</div>
                                 <div style="font-size: 1.3rem; font-weight: 700;" id="paybackMonths">24 Meses</div>
                             </div>
                             <div>
@@ -977,7 +977,7 @@
             <div class="calc-wrapper">
                 <div class="calc-controls" style="grid-template-columns: 1fr;">
                     <div class="input-group">
-                        <label>Prazo desejado de Payback
+                        <label>Prazo de Payback Desejado
                             <span class="val-display" id="paybackYearsVal">3 anos</span>
                         </label>
                         <input type="range" id="paybackYearsInput" class="slider-input" min="1" max="5" value="3" step="1" oninput="updatePaybackReal()">
@@ -1009,8 +1009,9 @@
                         </div>
 
                         <div class="res-card">
-                            <div class="res-label">Payback Real</div>
+                            <div class="res-label">Payback Descontado</div>
                             <div class="res-value accent" id="paybackReal">18.5 Meses</div>
+                        </div>
 
                         <div class="res-divider"></div>
 
@@ -1062,7 +1063,7 @@
                     </svg>
                     Após o Payback
                 </div>
-                <h2>Divisão em <span class="text-gradient">Cotas Iguais</span> após Amortização</h2>
+                <h2>Divisão em <span class="text-gradient">Cotas Iguais</span> (Amortização já Paga)</h2>
                 <p>Depois que a amortização é totalmente quitada, o lucro líquido mensal passa a ser dividido em partes iguais entre todos os sócios.</p>
             </div>
 
