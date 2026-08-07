@@ -1009,7 +1009,7 @@
                         </div>
 
                         <div class="res-card">
-                            <div class="res-label">Payback Descontado</div>
+                            <div class="res-label">Payback Investidor</div>
                             <div class="res-value accent" id="paybackReal">18.5 Meses</div>
                         </div>
 
@@ -1213,9 +1213,6 @@
             // Investimento real = Investimento Total menos o valor de revenda do equipamento
             const realInvestment = Math.max(currentTotalInvestment - resaleValue, 0);
 
-            // Payback real em meses, com base no lucro líquido mensal
-            const paybackRealMonths = currentMonthlyProfit > 0 ? (realInvestment / currentMonthlyProfit) : 0;
-
             // Valor mensal do payback: investimento real amortizado no prazo escolhido (em meses)
             const monthlyPaybackValue = realInvestment / (years * 12);
 
@@ -1238,6 +1235,10 @@
             }
 
             const investorValue = investorProfitShare + monthlyPaybackValue;
+
+            // Payback Investidor: investimento real dividido pelo valor recebido mensalmente
+            // pelo sócio investidor (participação no lucro descontado + amortização)
+            const paybackRealMonths = investorValue > 0 ? (realInvestment / investorValue) : 0;
 
             // Rentabilidade mensal "pura" do sócio investidor: sua cota de lucro sem contar
             // o valor da amortização (que é retorno de capital, não lucro)
